@@ -24,18 +24,36 @@ router.get(`/pages/:id`, async (req: Request, res: Response) => {
 });
 
 //store a page
-router.post(`/pages`, (req: Request, res: Response) => {
-  const data: any = req.body();
+router.post(`/pages`, async (req: Request, res: Response) => {
+  const data: any = req.body;
+  data.userId = 1;
+  const page = await prisma.page.create({
+    data,
+  });
+  res.json(page);
 });
 
 //edit a page
-router.post(`/pages/:id`, (req: Request, res: Response) => {
-  const data: any = req.body();
+router.put(`/pages/:id`, async (req: Request, res: Response) => {
+  const { id }: { id?: string } = req.params;
+
+  const data: any = req.body;
+  const updatedPage = await prisma.page.update({
+    where: { id: Number(id) || undefined },
+    data,
+  });
+  res.json(updatedPage);
 });
 
 //delete a page
-router.post(`/pages/:id`, (req: Request, res: Response) => {
+router.delete(`/pages/:id`, async (req: Request, res: Response) => {
   const { id }: { id?: string } = req.params;
+  const page = await prisma.page.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+  res.json(page);
 });
 
 export default router;
